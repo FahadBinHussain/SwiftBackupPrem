@@ -15,11 +15,14 @@ public final class Module implements IXposedHookLoadPackage {
 
         var xPrefs = new XSharedPreferences(BuildConfig.APPLICATION_ID);
         xPrefs.makeWorldReadable();
+        xPrefs.reload();
         var prefs = new PreferencesManager(xPrefs);
+        var firebaseUrl = prefs.getFirebaseDatabaseUrl();
+        var isValidUrl = firebaseUrl != null && firebaseUrl.length() > 0 && firebaseUrl.startsWith("https://") && !firebaseUrl.equals(".") && !firebaseUrl.equals("null");
         var customFirebaseApp = prefs.getCustomFirebaseApp() &&
             prefs.getGoogleAppId().length() > 0 &&
             prefs.getGoogleApiKey().length() > 0 &&
-            prefs.getFirebaseDatabaseUrl().length() > 0 &&
+            isValidUrl &&
             prefs.getGcmDefaultSenderId().length() > 0 &&
             prefs.getProjectId().length() > 0 &&
             prefs.getClientId().length() > 0;
